@@ -1,25 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { Fragment } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AddPatient from './Components/AddPatient';
+import AddVaccination from './Components/AddVaccination';
+import Navbar from './Components/layouts/Navbar';
+import VaccinationCard from './Components/VaccinationCard';
+import Home from './Components/Home';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/addPatient" element= {<AddPatient />} />
+        <Route path="/administerVaccinations" element={<><AddVaccination /> <VaccinationCard /></>} />
+      </Routes> 
+    </Fragment>
   );
 }
 
