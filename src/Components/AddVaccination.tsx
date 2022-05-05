@@ -28,7 +28,7 @@ const AddVaccination = () =>{
         else if(patient.vaccinations.length === 0 && vaccineInput.vaccination === '2nd') alert('1st dose is not complete')
         else if(patient.vaccinations.length === 2) alert('Already Vaccinated')
         else{
-            await axios.post(`http://localhost:8080/patients/${patient.id}/vaccine`,vaccineInput)
+            await axios.post(`https://vaccination-portal-backend.herokuapp.com/patients/${patient.id}/vaccine`,vaccineInput)
             setName("")
             setPatient({})
             setVaccineInput(initialVaccineInput)
@@ -98,10 +98,10 @@ const AddVaccination = () =>{
                                 <input type="text" className="form-control" name="givenAt" value={givenAt} onChange={handleChange} />
                             </div>
                             <div className="col-6">
-                                <input type="submit" value="Submit" className='btn btn-primary btn-block' />
+                                <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block' />
                             </div>
                             <div className="col-md-6">
-                                <Link className='btn btn-danger' to={'/'} >Cancel</Link>
+                                <Link className='w-100 btn btn-danger' to={'/'} >Cancel</Link>
                             </div>
                         </form>
                     </div>

@@ -30,7 +30,7 @@ const ContextProvider = (props : any) =>{
 
     const fetchData = async () =>{
         setLoading(true)
-        const res = await axios.get("http://localhost:8080/patients")
+        const res = await axios.get("https://vaccination-portal-backend.herokuapp.com/patients")
         setPatients(res.data)
         setLoading(false)
     }

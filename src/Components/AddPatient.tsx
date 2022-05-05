@@ -36,7 +36,7 @@ const AddPatient = () =>{
             alert('Patient already exist')
         }
         else{
-            await axios.post("http://localhost:8080/patients", {...input, dateOfBirth: new Date(dateOfBirth)})
+            await axios.post("https://vaccination-portal-backend.herokuapp.com/patients", {...input, dateOfBirth: new Date(dateOfBirth)})
             setInput(initialInput)
             handleRefreshChange()
             handleModalShow()           
@@ -100,10 +100,10 @@ const AddPatient = () =>{
                                 <input type="number" step={0.1} className="form-control" name="weight" value={weight} onChange={handleChange} />
                             </div>
                             <div className="col-6">
-                                <input type="submit" value="Submit" className='btn btn-primary btn-block'/>
+                                <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block'/>
                             </div>
                             <div className="col-md-6">
-                                <Link className='btn btn-danger' to={'/'} >Cancel</Link>
+                                <Link className='w-100 btn btn-danger' to={'/'} >Cancel</Link>
                             </div>
                         </form>
                     </div>
