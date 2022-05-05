@@ -18,6 +18,7 @@ const initialInput ={
 const AddPatient = () =>{
     const [input, setInput] = useState<IPaitent>(initialInput)
     const [showModal, setShowModal] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const context = useContext(Context)
     const {handleRefreshChange} = context
     const {name, dateOfBirth, gender, placeOfBirth, bloodGroup, height, weight} = input
@@ -36,7 +37,9 @@ const AddPatient = () =>{
             alert('Patient already exist')
         }
         else{
+            setLoading(true)
             await axios.post("https://vaccination-portal-backend.herokuapp.com/patients", {...input, dateOfBirth: new Date(dateOfBirth)})
+            setLoading(false)
             setInput(initialInput)
             handleRefreshChange()
             handleModalShow()           
@@ -50,7 +53,7 @@ const AddPatient = () =>{
     }
     return(
         <Fragment>
-            <div className='offset-4 col-4 mt-5'>
+            <div className='offset-4 col-4 mt-5 bg-color'>
                 <div className='card'>
                     <div className='card-header'>
                         <h3 className='text-center'>Add Patient</h3>
@@ -100,7 +103,14 @@ const AddPatient = () =>{
                                 <input type="number" step={0.1} className="form-control" name="weight" value={weight} onChange={handleChange} />
                             </div>
                             <div className="col-6">
-                                <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block'/>
+                                {loading === false ?
+                                    <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block'/>
+                                    :
+                                    <button className="w-100 btn btn-primary" type="button" disabled>
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Loading...
+                                    </button>
+                                }
                             </div>
                             <div className="col-md-6">
                                 <Link className='w-100 btn btn-danger' to={'/'} >Cancel</Link>

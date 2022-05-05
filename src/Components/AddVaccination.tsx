@@ -1,6 +1,7 @@
 import axios from "axios"
-import React , {Fragment, useContext, useEffect, useRef, useState} from "react"
+import React , {Fragment, useContext, useEffect, useState} from "react"
 import { Link } from "react-router-dom"
+import { Button, Modal } from 'react-bootstrap'
 import { Context } from "../Context/Context"
 
 const initialVaccineInput = {
@@ -12,9 +13,10 @@ const initialVaccineInput = {
 const AddVaccination = () =>{
     const [vaccineInput, setVaccineInput] = useState(initialVaccineInput)
     const [name , setName] = useState<string>("")
-    const [patient, setPatient] = useState<any>({})
-    const dateOfBirth = useRef("")
-    const vaccinationOption = ""
+    const [patient, setPatient] = useState<any>()
+    const [loading, setLoading] = useState<boolean>(false)
+    const [showModal, setShowModal] = useState<boolean>(false)
+
 
     const context = useContext(Context)
     const {patients, handleRefreshChange} = context
@@ -28,17 +30,17 @@ const AddVaccination = () =>{
         else if(patient.vaccinations.length === 0 && vaccineInput.vaccination === '2nd') alert('1st dose is not complete')
         else if(patient.vaccinations.length === 2) alert('Already Vaccinated')
         else{
+            setLoading(true)
             await axios.post(`https://vaccination-portal-backend.herokuapp.com/patients/${patient.id}/vaccine`,vaccineInput)
             setName("")
-            setPatient({})
+            setLoading(false)
             setVaccineInput(initialVaccineInput)
             handleRefreshChange()
+            handleModalShow()
         }  
     }
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) =>{
-        console.log(patient)
-        setDob()
         setVaccineInput({...vaccineInput, [(e.target as HTMLInputElement).name] : (e.target as HTMLInputElement).value})
     }
 
@@ -46,15 +48,17 @@ const AddVaccination = () =>{
         setName((e.target as HTMLInputElement).value)
     }
 
-    const setDob = () =>{
-        dateOfBirth.current = patient.dateOfBirth.substring(0,10)
-        console.log(dateOfBirth.current)
+    const handleModalClose = () =>{
+        setShowModal(false)
+    }
+    const handleModalShow = () =>{
+        setShowModal(true)
     }
 
     useEffect(() =>{
-        console.log(patient)
         setPatient(patients.find(p => p.name === name))
     },[name])
+    
     const {vaccination, dateAdministrated, vaccineBrand, givenAt} = vaccineInput
 
     return(
@@ -75,14 +79,15 @@ const AddVaccination = () =>{
                             </div>
                             <div className="col-md-6">
                                 <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
-                                <input type="date" className="form-control" value={dateOfBirth.current}  disabled  />
+                                <input type="date" className="form-control" value={patient === undefined? "" : patient.dateOfBirth.substring(0,10)}  disabled  />
                             </div>
                             <div className="col-md-6">
                                 <label htmlFor="vaccination" className="form-label">Vaccination</label>
                                 <select name="vaccination" className="form-select" value={vaccination} onChange= {handleChange}>
                                     <option selected>Choose...</option>
-                                    <option>1st</option>
-                                    <option>2nd</option>
+                                    {
+                                        patient === undefined ? '' : patient.vaccinations.length === 0 ? <option>1st</option> : patient.vaccinations.length === 1 ? <option>2nd</option> : ''
+                                    }
                                 </select>
                             </div>
                             <div className="col-md-6">
@@ -98,7 +103,14 @@ const AddVaccination = () =>{
                                 <input type="text" className="form-control" name="givenAt" value={givenAt} onChange={handleChange} />
                             </div>
                             <div className="col-6">
-                                <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block' />
+                                {loading === false ?
+                                    <input type="submit" value="Submit" className='w-100 btn btn-primary btn-block'/>
+                                    :
+                                    <button className="w-100 btn btn-primary" type="button" disabled>
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Loading...
+                                    </button>
+                                }
                             </div>
                             <div className="col-md-6">
                                 <Link className='w-100 btn btn-danger' to={'/'} >Cancel</Link>
@@ -107,6 +119,19 @@ const AddVaccination = () =>{
                     </div>
                 </div>
             </div>
+            
+            {/* Modal */}
+            <Modal show={showModal} onHide={handleModalClose} backdrop='static' keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Success!!!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Vaccine Added Successfully!!!
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className='btn btn-primary' onClick={handleModalClose}>Ok</Button>
+                </Modal.Footer>
+            </Modal>
         </Fragment>
     )
 }

@@ -7,6 +7,7 @@ const VaccinationCard = () =>{
     const context = useContext(Context)
     const [toggleSort, setToggleSort] = useState<number>(1)
 
+    const {loading} = context
     const ascendingNameSort = Object.assign([],context.patients)
     const descendingNameSort = Object.assign([],context.patients)
 
@@ -15,7 +16,9 @@ const VaccinationCard = () =>{
     },[toggleSort])
 
     let display
-
+    useEffect(() =>{
+        console.log(loading)
+    },[loading])
     ascendingNameSort.sort((a,b) =>{
         if(a['name'] > b['name']) return 1
         else if(a['name'] < b['name']) return -1
